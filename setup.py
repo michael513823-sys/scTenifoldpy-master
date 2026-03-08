@@ -22,24 +22,25 @@ CLFS = [
     "Programming Language :: Python :: 3.7",
 ]
 
+# update the install requires
+# let pip chooses the appropriate version of the dependencies based on the user's environment
 INSTALL_REQUIRES = [
-        "pandas~=1.2.5",
-        "numpy~=1.20.3",
-        "scipy~=1.6.3",
-        "setuptools~=56.2.0",
-        "typer~=0.4.0",
-        "PyYAML~=5.4.1",
-        "ray~=1.8.0",
-        "scikit-learn~=0.24.2",
-        "tensorly~=0.6.0",
-        "requests~=2.26.0",
-        "seaborn~=0.11.1",
-        "matplotlib~=3.4.3",
-        "networkx~=2.6.3",
-        "scanpy~=1.7.2",
-        "protobuf==3.20.*"
-    ]
-
+    "pandas>=1.2",
+    "numpy>=1.20",
+    "scipy>=1.6",
+    "setuptools>=56",
+    "typer>=0.4",
+    "PyYAML>=5.4",
+    "ray>=1.8",
+    "scikit-learn>=0.24",
+    "tensorly>=0.6",
+    "requests>=2.26",
+    "seaborn>=0.11",
+    "matplotlib>=3.4",
+    "networkx>=2.6",
+    "scanpy>=1.7",
+    "protobuf>=3.20,<5"
+]
 # This call to setup() does all the work
 setup(
     name=PKG_NAME,
