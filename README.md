@@ -15,25 +15,10 @@ if you are using this in a scientific publication. Thank you!
 
 **Clone and install locally:**
 ```bash
-git clone https://github.com/qwerty239qwe/scTenifoldpy.git
+git clone https://github.com/michael513823-sys/scTenifoldpy-cuda.git
 cd scTenifoldpy
 pip install -e .
 ```
-
-**With CUDA acceleration (recommended for large datasets):**
-```bash
-git clone https://github.com/qwerty239qwe/scTenifoldpy.git
-cd scTenifoldpy
-
-# CuPy backend — choose the variant matching your CUDA toolkit version
-pip install -e ".[cuda12]"   # CUDA 12.x
-pip install -e ".[cuda11]"   # CUDA 11.x
-
-# PyTorch GPU backend (fallback when CuPy is unavailable)
-pip install -e ".[torch-gpu]"
-```
-
-> **Note:** This version is not published on PyPI. Please install from source as shown above. CUDA dependencies are optional — the package runs fully on CPU if neither CuPy nor a CUDA-enabled PyTorch is installed.
 
 ---
 
