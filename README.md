@@ -3,6 +3,12 @@
 [![Pattern](https://img.shields.io/badge/DOI-10.1016/j.patter.2020.100139-blue)](https://www.sciencedirect.com/science/article/pii/S2666389920301872#bib48)
 [![GitHub license](https://img.shields.io/github/license/qwerty239qwe/scTenifoldpy.svg)](https://github.com/qwerty239qwe/scTenifoldpy/blob/master/LICENSE)
 
+> **This is a fork of [qwerty239qwe/scTenifoldpy](https://github.com/qwerty239qwe/scTenifoldpy).**
+> Key improvements over the original:
+> - **Python 3.9+ compatible** — works with modern Python environments
+> - **Updated dependencies** — compatible with the latest pandas, NumPy, and scanpy
+> - **CUDA GPU acceleration** — optional GPU backend via CuPy or PyTorch for PCNet construction, tensor decomposition, and virtual knock-out propagation
+
 This package is a Python version of [scTenifoldNet](https://github.com/cailab-tamu/scTenifoldNet) 
 and [scTenifoldKnk](https://github.com/cailab-tamu/scTenifoldKnk). If you are a R/MATLAB user, 
 please install them to use their functions. 
