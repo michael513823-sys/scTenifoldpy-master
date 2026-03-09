@@ -1,3 +1,58 @@
-/venv/
-/.idea/
-/data/example_data/
+# ── 虚拟环境 ────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# ── IDE / 编辑器 ─────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ── Python 编译缓存 ──────────────────────────────────────────
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# ── 构建 & 分发产物 ──────────────────────────────────────────
+build/
+dist/
+*.egg-info/
+scTenifoldpy.egg-info/
+*.egg
+MANIFEST
+
+# ── 测试 & 覆盖率 ────────────────────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+
+# ── Jupyter Notebook 检查点 ──────────────────────────────────
+.ipynb_checkpoints/
+
+# ── 类型检查 & Lint ──────────────────────────────────────────
+.mypy_cache/
+.ruff_cache/
+.pylint.d/
+
+# ── 文档构建输出 ─────────────────────────────────────────────
+docs/build/
+docs/source/_build/
+
+# ── 数据 ─────────────────────────────────────────────────────
+data/example_data/
+
+# ── 运行时 / 日志 ────────────────────────────────────────────
+*.log
+*.tmp
+*.bak
+/tmp/

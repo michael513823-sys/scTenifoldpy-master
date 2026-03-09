@@ -41,6 +41,17 @@ INSTALL_REQUIRES = [
     "scanpy>=1.7",
     "protobuf>=3.20,<5"
 ]
+
+# Optional CUDA acceleration extras.
+# Install with:  pip install scTenifoldpy[cuda11]  or  [cuda12]  or  [torch-gpu]
+# cupy wheel names encode the CUDA toolkit version;
+# choose the variant that matches your CUDA driver.
+EXTRAS_REQUIRE = {
+    "cuda11": ["cupy-cuda11x>=10.0"],
+    "cuda12": ["cupy-cuda12x>=12.0"],
+    "torch-gpu": ["torch>=2.0"],       # user must install the CUDA-enabled wheel
+    "cuda": ["cupy-cuda12x>=12.0"],    # convenient alias → latest CUDA
+}
 # This call to setup() does all the work
 setup(
     name=PKG_NAME,
@@ -56,6 +67,7 @@ setup(
     packages=PKGS,
     include_package_data=True,
     install_requires=INSTALL_REQUIRES,
+    extras_require=EXTRAS_REQUIRE,
     entry_points={
         "console_scripts": [
             "scTenifold=scTenifold.__main__:app",

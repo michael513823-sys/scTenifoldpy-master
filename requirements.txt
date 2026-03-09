@@ -14,3 +14,19 @@ matplotlib~=3.4.3
 networkx~=2.6.3
 scanpy~=1.7.2
 protobuf==3.20.*
+
+# ---------------------------------------------------------------------------
+# Optional CUDA acceleration (install ONE of the following groups)
+# ---------------------------------------------------------------------------
+# CuPy  — recommended; choose the wheel matching your CUDA toolkit version:
+#   pip install cupy-cuda11x   # CUDA 11.x
+#   pip install cupy-cuda12x   # CUDA 12.x
+#
+# PyTorch (GPU build, fallback backend):
+#   See https://pytorch.org/get-started/locally/ for the correct wheel URL.
+#   e.g.:  pip install torch --index-url https://download.pytorch.org/whl/cu121
+#
+# Shortcut via extras (after pip install -e .):
+#   pip install "scTenifoldpy[cuda12]"   # cupy for CUDA 12
+#   pip install "scTenifoldpy[cuda11]"   # cupy for CUDA 11
+#   pip install "scTenifoldpy[torch-gpu]"# PyTorch GPU build

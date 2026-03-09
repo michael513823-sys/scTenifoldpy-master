@@ -12,6 +12,16 @@ import ray
 
 from scTenifold.core._utils import cal_fdr, timer
 
+# Optional CUDA acceleration – imported lazily so CPU-only installs still work
+try:
+    from scTenifold.core._networks_cuda import (
+        make_networks_cuda,
+        CUDA_AVAILABLE as _CUDA_AVAILABLE,
+    )
+except ImportError:  # pragma: no cover
+    make_networks_cuda = None  # type: ignore
+    _CUDA_AVAILABLE = False
+
 
 __all__ = ["make_networks", "cal_pcNet", "cal_pc_coefs", "manifold_alignment", "d_regulation", "strict_direction"]
 
@@ -121,6 +131,8 @@ def make_networks(data: pd.DataFrame,
                   q: float = 0.95,
                   random_state: int = 42,
                   n_cpus: int = -1,
+                  use_cuda: bool = False,
+                  device: str = "cuda:0",
                   **kwargs
                   ) -> List[coo_matrix]:
     """
@@ -145,6 +157,14 @@ def make_networks(data: pd.DataFrame,
     random_state: int, default = 42
         Random seed of constructing PCNets
     n_cpus: int, default = -1
+        Number of CPU cores for Ray parallelism. Ignored when use_cuda=True.
+    use_cuda: bool, default = False
+        If True, delegate all computation to the CUDA backend
+        (:func:`make_networks_cuda`). Requires cupy or a CUDA-enabled torch.
+        When True the ``n_cpus`` / Ray settings are bypassed entirely.
+    device : str, default "cuda:0"
+        CUDA device string forwarded to the PyTorch backend (CuPy always
+        uses the default CUDA device).
 
     kwargs
         Keyword arguments
@@ -154,6 +174,33 @@ def make_networks(data: pd.DataFrame,
     networks: List[coo_matrix]
         A list contains PCNets (in coo sparse matrix format)
     """
+    # ------------------------------------------------------------------ #
+    # CUDA fast-path: delegate entirely to make_networks_cuda             #
+    # ------------------------------------------------------------------ #
+    if use_cuda:
+        if make_networks_cuda is None or not _CUDA_AVAILABLE:
+            warn(
+                "use_cuda=True requested but no CUDA backend is available. "
+                "Falling back to the CPU (Ray) path.",
+                RuntimeWarning,
+            )
+        else:
+            return make_networks_cuda(
+                data,
+                n_nets=n_nets,
+                n_samp_cells=n_samp_cells,
+                n_comp=n_comp,
+                scale_scores=scale_scores,
+                symmetric=symmetric,
+                q=q,
+                random_state=random_state,
+                device=device,
+                **kwargs,
+            )
+
+    # ------------------------------------------------------------------ #
+    # CPU path (original Ray implementation)                              #
+    # ------------------------------------------------------------------ #
     gene_names = data.index.to_numpy()
     n_genes, n_cells = data.shape
     assert not np.array_equal(gene_names, np.array([i for i in range(n_genes)])), 'Gene names are required'
