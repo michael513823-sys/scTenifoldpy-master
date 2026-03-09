@@ -9,14 +9,38 @@ please install them to use their functions.
 Also, please [cite](https://www.sciencedirect.com/science/article/pii/S2666389920301872) the original paper properly 
 if you are using this in a scientific publication. Thank you!
 
+---
+
 ### Installation
-```
-pip install scTenifoldpy
+
+**Clone and install locally:**
+```bash
+git clone https://github.com/qwerty239qwe/scTenifoldpy.git
+cd scTenifoldpy
+pip install -e .
 ```
 
+**With CUDA acceleration (recommended for large datasets):**
+```bash
+git clone https://github.com/qwerty239qwe/scTenifoldpy.git
+cd scTenifoldpy
+
+# CuPy backend — choose the variant matching your CUDA toolkit version
+pip install -e ".[cuda12]"   # CUDA 12.x
+pip install -e ".[cuda11]"   # CUDA 11.x
+
+# PyTorch GPU backend (fallback when CuPy is unavailable)
+pip install -e ".[torch-gpu]"
+```
+
+> **Note:** This version is not published on PyPI. Please install from source as shown above. CUDA dependencies are optional — the package runs fully on CPU if neither CuPy nor a CUDA-enabled PyTorch is installed.
+
+---
 
 ### Usages
+
 scTenifold can be imported as a normal Python package:
+
 #### scTenifoldNet
 ```python
 from scTenifold.data import get_test_df
@@ -35,25 +59,70 @@ from scTenifold import scTenifoldKnk
 df = get_test_df(n_cells=1000)
 sc = scTenifoldKnk(data=df,
                    ko_method="default",
-                   ko_genes=["NG-1"],  # the gene you wants to knock out
+                   ko_genes=["NG-1"],  # the gene you want to knock out
                    qc_kws={"min_lib_size": 10, "min_percent": 0.001},
                    )
 result = sc.build()
 ```
 
+---
+
+### CUDA GPU Acceleration
+
+This fork adds optional CUDA acceleration for the three most compute-intensive steps. Enable it by passing `use_cuda=True`:
+
+#### PCNet construction (network building)
+```python
+# Uses GPU batch-SVD instead of Ray multiprocessing
+sc.run_step("nc", use_cuda=True)
+
+# Specify a particular GPU
+sc.run_step("nc", use_cuda=True, device="cuda:1")
+```
+
+#### Tensor decomposition
+```python
+sc.run_step("td", use_cuda=True)
+```
+
+#### Virtual knock-out with propagation
+```python
+sc = scTenifoldKnk(
+    data=df,
+    ko_method="propagation",
+    ko_genes=["NG-1"],
+    nc_kws={"use_cuda": True},
+    td_kws={"use_cuda": True},
+    ko_kws={"use_cuda": True},
+)
+result = sc.build()
+```
+
+**Automatic fallback:** if no CUDA device is detected at runtime, a `RuntimeWarning` is printed and computation falls back to the original CPU path automatically.
+
+| Parameter | Default | Description |
+|---|---|---|
+| `use_cuda` | `False` | Enable GPU acceleration |
+| `device` | `"cuda:0"` | CUDA device string (PyTorch backend only) |
+| `fast_svd` | `True` | Use batched global-SVD approximation (fastest, CuPy only) |
+
+See [parallel_computing_analysis.md](parallel_computing_analysis.md) for a detailed technical analysis of the original Ray-based parallelism and the CUDA redesign.
+
+---
+
 ### Command Line tool
-Once the package is installed, users can use commandline tool to generate all the results <br>
-Use this command to create a config.yml file, 
+Once the package is installed, users can use the command line tool to generate all results.
+
+Use this command to create a config file:
 ```shell
 python -m scTenifold config -t 1 -p ./net_config.yml
 ```
-Next, open the config file, add data path, and edit the parameters.<br>
-Then use the command below to produce the scTenifoldNet results:
-```shell
-python -m scTenifold net -c ./net_config.yml -o ./output_folder
-```
+Open the config file, add data path, and edit the parameters. Then run:
 
-Or use the command below to produce the knockout results:
 ```shell
+# scTenifoldNet
+python -m scTenifold net -c ./net_config.yml -o ./output_folder
+
+# scTenifoldKnk
 python -m scTenifold knk -c ./knk_config.yml -o ./output_folder
 ```
